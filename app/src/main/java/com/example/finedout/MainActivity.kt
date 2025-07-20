@@ -169,26 +169,45 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
         }
 
         // Bottom Buttons
-        Row(
+        // Bottom Buttons
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(
-                onClick = { showAddFriend = !showAddFriend },
-                modifier = Modifier.weight(1f)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("+ Add Friend")
+                Button(
+                    onClick = { showAddFriend = !showAddFriend },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("+ Add Friend")
+                }
+
+                Button(
+                    onClick = {
+                        // TODO: Implement View History functionality
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("View History")
+                }
             }
 
             Button(
                 onClick = {
-                    // TODO: Implement View History functionality
+                    peopleList = peopleList.map { it.copy(fine = 0) }
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
             ) {
-                Text("View History")
+                Text("Reset Fines")
             }
         }
+
     }
 }
 
