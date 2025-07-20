@@ -13,8 +13,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.finedout.ui.theme.FinedOutTheme
 import com.example.finedout.util.PreferencesHelper
-
 import androidx.compose.ui.platform.LocalContext
+import com.example.finedout.util.DateUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -64,7 +64,7 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
     ) {
         // Title Bar
         Text(
-            text = "Monthly Fine Tracker (2025)",
+            text = "Monthly Fine Tracker (${DateUtils.getCurrentMonthYear()})",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .fillMaxWidth()
