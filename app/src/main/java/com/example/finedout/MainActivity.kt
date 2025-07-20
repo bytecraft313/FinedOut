@@ -1,5 +1,6 @@
 package com.example.finedout
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,8 +9,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.finedout.ui.theme.FinedOutTheme
+import com.example.finedout.util.PreferencesHelper
+
+import androidx.compose.ui.platform.LocalContext
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,10 +28,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FineTrackerApp()
+                    FineTrackerApp(context = this)
                 }
             }
         }
+
     }
 }
 
@@ -33,8 +42,17 @@ data class Person(
 )
 
 @Composable
-fun FineTrackerApp() {
+fun FineTrackerApp(context: Context = LocalContext.current) {
     var peopleList by remember { mutableStateOf(listOf<Person>()) }
+
+    LaunchedEffect(Unit) {
+        peopleList = PreferencesHelper.loadPeople(context)
+    }
+
+    LaunchedEffect(peopleList) {
+        PreferencesHelper.savePeople(context, peopleList)
+    }
+
     var showAddFriend by remember { mutableStateOf(false) }
     var nameInput by remember { mutableStateOf("") }
 
@@ -46,7 +64,7 @@ fun FineTrackerApp() {
     ) {
         // Title Bar
         Text(
-            text = "Monthly Fine Tracker (July 2025)",
+            text = "Monthly Fine Tracker (2025)",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .fillMaxWidth()
