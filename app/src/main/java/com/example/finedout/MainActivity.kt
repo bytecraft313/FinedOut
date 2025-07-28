@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
@@ -67,6 +68,9 @@ data class Person(
 fun FineTrackerApp(context: Context = LocalContext.current) {
     var peopleList by remember { mutableStateOf(listOf<Person>()) }
 
+    var fineStepAmount by remember { mutableStateOf(5) }
+    var fineStepInput by remember { mutableStateOf("5") }
+
     LaunchedEffect(Unit) {
         peopleList = PreferencesHelper.loadPeople(context)
     }
@@ -84,7 +88,7 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
         .fillMaxSize()
         .padding(16.dp)
     ) {
-        // Title Bar
+        // Title
         Text(
             text = "Monthly Fine Tracker (${DateUtils.getCurrentMonthYear()})",
             style = MaterialTheme.typography.titleLarge,
@@ -93,11 +97,32 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
                 .padding(bottom = 16.dp)
         )
 
-        Divider()
+        // Fine Step Input
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                value = fineStepInput,
+                onValueChange = {
+                    fineStepInput = it
+                    it.toIntOrNull()?.let { value ->
+                        fineStepAmount = value
+                    }
+                },
+                label = { Text("Fine Step Amount") },
+                modifier = Modifier.weight(1f)
+            )
+            Text("AFN")
+        }
 
+        Divider()
         Spacer(modifier = Modifier.height(8.dp))
 
-        // List of Friends
+        // Friend List
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -116,13 +141,13 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
 
                         Button(
                             onClick = {
-                                val updatedFine = (person.fine - 5).coerceAtLeast(0)
+                                val updatedFine = (person.fine - fineStepAmount).coerceAtLeast(0)
                                 peopleList = peopleList.toMutableList().also {
                                     it[index] = person.copy(fine = updatedFine)
                                 }
                             },
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                            shape = MaterialTheme.shapes.small
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+                            shape = RoundedCornerShape(50)
                         ) {
                             Text("-")
                         }
@@ -131,13 +156,13 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
 
                         Button(
                             onClick = {
-                                val updatedFine = person.fine + 5
+                                val updatedFine = person.fine + fineStepAmount
                                 peopleList = peopleList.toMutableList().also {
                                     it[index] = person.copy(fine = updatedFine)
                                 }
                             },
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                            shape = MaterialTheme.shapes.small
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+                            shape = RoundedCornerShape(50)
                         ) {
                             Text("+")
                         }
@@ -156,15 +181,13 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
                         }
                     }
                 }
-
             }
         }
 
         Divider()
-
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Total Fine
+        // Total Fine Row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -175,7 +198,7 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Add Friend Input (conditionally visible)
+        // Add Friend Input
         if (showAddFriend) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -205,7 +228,6 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
         }
 
         // Bottom Buttons
-        // Bottom Buttons
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -223,7 +245,7 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
 
                 Button(
                     onClick = {
-                        // TODO: Implement View History functionality
+                        // TODO: View history implementation
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -246,7 +268,6 @@ fun FineTrackerApp(context: Context = LocalContext.current) {
                 Text("Reset Fines")
             }
         }
-
     }
 }
 
